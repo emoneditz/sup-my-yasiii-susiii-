@@ -530,6 +530,72 @@
             --border-radius: 1rem;
         }
 
+        /* NEW STYLES FOR REACTION EXPAND */
+        #quickReactions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: nowrap;
+        }
+        
+        .reaction-emoji {
+            flex-shrink: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+            font-size: 1.5rem;
+            transition: transform 0.2s ease;
+        }
+        
+        .reaction-emoji:hover {
+            transform: scale(1.25);
+        }
+        
+        .expand-toggle-btn {
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+        }
+        
+        .expand-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        #expandedReactionsPanel {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(2.5rem, 1fr));
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        #expandedReactionsPanel.show {
+            display: grid !important;
+        }
+        
+        #expandedReactionsPanel::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        #expandedReactionsPanel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        #expandedReactionsPanel::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
         @media (max-width: 768px) {
             .message { 
                 max-width: 85%; 
@@ -622,7 +688,10 @@
 
 <div id="messageActionMenu" class="hidden absolute z-[101]">
     <div id="quickReactions" class="flex items-center gap-1 p-2 mb-2" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 2rem;">
-        <!-- Reactions will be populated by JS -->
+        <!-- Quick reactions (first 5) will be populated by JS -->
+    </div>
+    <div id="expandedReactionsPanel" class="hidden" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 1rem; padding: 1rem; margin-bottom: 0.5rem; max-height: 200px; overflow-y: auto;">
+        <!-- All reactions will be populated by JS -->
     </div>
     <div class="flex flex-col gap-1 p-1" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 0.5rem;">
         <button id="replyBtn" class="context-action-btn">
@@ -663,6 +732,7 @@
     
     const messageActionMenu = document.getElementById('messageActionMenu');
     const quickReactions = document.getElementById('quickReactions');
+    const expandedReactionsPanel = document.getElementById('expandedReactionsPanel');
     const replyBtn = document.getElementById('replyBtn');
     const copyBtn = document.getElementById('copyBtn');
     const deleteBtn = document.getElementById('deleteBtn');
@@ -687,7 +757,6 @@
         '🤡', '🕊️', '🐳', '🍓', '🎃', '👻', '🎉', '💔', '💯', '💸', 
         '⚡', '🏆', '🍾', '😈'
     ];
-    let showAllReactions = false;
     
     let replyTimer = null; 
     let isConnectionActive = false; // Tracks if the connection has been confirmed
@@ -914,6 +983,13 @@
             activeMessageElement = null;
         }
         emojiPickerContainer.classList.add('hidden');
+        // Reset expanded panel when closing menu
+        expandedReactionsPanel.classList.remove('show');
+        expandedReactionsPanel.classList.add('hidden');
+        const expandBtn = document.getElementById('expandBtn');
+        if (expandBtn) {
+            expandBtn.innerHTML = '<i class="fas fa-chevron-down"></i>';
+        }
     }
 
     function handleReaction(emoji) {
@@ -963,7 +1039,34 @@
     function cancelReply() { activeReplyMessage = null; replyingToBar.classList.remove('show'); }
     
     function populateReactions() {
-        quickReactions.innerHTML = defaultReactions.map(emoji => `<button class="reaction-emoji text-2xl transform hover:scale-125 transition-transform" onclick="event.stopPropagation(); handleReaction('${emoji}')">${emoji}</button>`).join('');
+        // Populate quick reactions (first 5 emojis + expand button)
+        quickReactions.innerHTML = defaultReactions.map(emoji => 
+            `<button class="reaction-emoji" onclick="event.stopPropagation(); handleReaction('${emoji}')">${emoji}</button>`
+        ).join('') + `
+            <button class="expand-toggle-btn" onclick="event.stopPropagation(); toggleReactionExpand()" id="expandBtn">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        `;
+        
+        // Populate expanded panel with all reactions
+        expandedReactionsPanel.innerHTML = allReactions.map(emoji => 
+            `<button class="reaction-emoji" onclick="event.stopPropagation(); handleReaction('${emoji}')">${emoji}</button>`
+        ).join('');
+    }
+    
+    function toggleReactionExpand() {
+        const isExpanded = expandedReactionsPanel.classList.contains('show');
+        const expandBtn = document.getElementById('expandBtn');
+        
+        if (isExpanded) {
+            expandedReactionsPanel.classList.remove('show');
+            expandedReactionsPanel.classList.add('hidden');
+            expandBtn.innerHTML = '<i class="fas fa-chevron-down"></i>';
+        } else {
+            expandedReactionsPanel.classList.remove('hidden');
+            expandedReactionsPanel.classList.add('show');
+            expandBtn.innerHTML = '<i class="fas fa-chevron-up"></i>';
+        }
     }
     
     function deleteMessage() {
