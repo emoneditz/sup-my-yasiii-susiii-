@@ -680,7 +680,14 @@
     
     let activeMessageElement = null;
     let activeReplyMessage = null;
-    const defaultReactions = ['🤣', '❤️', '👍', '👎', '🔥', '🥰'];
+    const defaultReactions = ['😊', '👍', '👎', '❤️', '🔥'];
+    const allReactions = [
+        '😊', '👍', '👎', '❤️', '🔥', '🥰', '👏', '😁', '🤔', '🤯', 
+        '😱', '🤬', '😢', '😭', '😂', '😮', '🙏', '👌', '🤮', '💩', 
+        '🤡', '🕊️', '🐳', '🍓', '🎃', '👻', '🎉', '💔', '💯', '💸', 
+        '⚡', '🏆', '🍾', '😈'
+    ];
+    let showAllReactions = false;
     
     let replyTimer = null; 
     let isConnectionActive = false; // Tracks if the connection has been confirmed
