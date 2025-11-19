@@ -160,6 +160,14 @@
             margin: 0;
         }
 
+        .media-audio {
+            width: 100%;
+            height: 40px;
+            border-radius: 20px;
+            margin-top: 0.25rem;
+            outline: none;
+        }
+
         .input-box {
             position: fixed;
             left: 0;
@@ -202,6 +210,7 @@
             min-height: 3rem;
             transition: border-color 0.3s ease;
             box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+            padding-right: 0.5rem;
         }
 
         .message-input-wrapper:focus-within {
@@ -264,6 +273,95 @@
             color: var(--text-secondary);
             cursor: not-allowed;
         }
+
+        /* Microphone Button */
+        .mic-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem 0.75rem;
+            font-size: 1.2rem;
+            transition: color 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .mic-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+
+        /* Recording Interface */
+        .recording-ui {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--input-bg);
+            z-index: 60;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            border-radius: 0;
+            backdrop-filter: blur(10px);
+        }
+
+        .recording-ui.active {
+            display: flex;
+        }
+
+        .recording-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #ef4444;
+            font-weight: 600;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        .recording-dot {
+            width: 12px;
+            height: 12px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            animation: pulse-red 1.2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .recording-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .rec-action-btn {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: transform 0.2s, color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rec-cancel { color: #ef4444; }
+        .rec-send { color: var(--accent); }
+        
+        .rec-action-btn:hover { transform: scale(1.15); }
 
         .file-info-bar {
             display: none;
@@ -616,6 +714,22 @@
     </div>
 
     <div class="input-box" id="inputBox">
+        <!-- Recording UI Overlay -->
+        <div class="recording-ui" id="recordingUI">
+            <div class="recording-indicator">
+                <div class="recording-dot"></div>
+                <span id="recordTimer">00:00</span>
+            </div>
+            <div class="recording-actions">
+                <button class="rec-action-btn rec-cancel" id="cancelRecBtn" title="Cancel">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button class="rec-action-btn rec-send" id="sendRecBtn" title="Send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
         <input type="file" id="fileInput" class="hidden" accept="image/*,video/*,.pdf,.doc,.docx,.txt">
         <div class="input-content-wrapper">
             <div class="input-area-container">
@@ -646,6 +760,9 @@
                         <i class="fas fa-paperclip"></i>
                     </button>
                     <textarea id="msg" class="message-input" placeholder="Type a message..." rows="1"></textarea>
+                    <button type="button" class="mic-btn" id="startRecBtn">
+                        <i class="fas fa-microphone"></i>
+                    </button>
                 </div>
             </div>
             <button type="button" class="send-button" onclick="sendMessage()" id="sendBtn">
@@ -711,6 +828,19 @@
     const replyingToUser = document.getElementById('replyingToUser');
     const replyingToText = document.getElementById('replyingToText');
     const replyCloseBtn = document.getElementById('replyCloseBtn');
+
+    // Voice Recording Elements
+    const recordingUI = document.getElementById('recordingUI');
+    const recordTimer = document.getElementById('recordTimer');
+    const startRecBtn = document.getElementById('startRecBtn');
+    const cancelRecBtn = document.getElementById('cancelRecBtn');
+    const sendRecBtn = document.getElementById('sendRecBtn');
+    
+    let mediaRecorder;
+    let audioChunks = [];
+    let recordStartTime;
+    let recordInterval;
+    let shouldSendRecording = false;
 
     let chatHistory = [];
     let historyOffset = 0;
@@ -848,7 +978,7 @@
                 const replyPreview = document.createElement('div');
                 replyPreview.className = 'reply-preview';
                 const originalSender = originalMessage.sender === 'me' ? 'You' : 'Emon';
-                const originalText = (originalMessage.text || originalMessage.fileName || 'Media').substring(0, 50);
+                const originalText = (originalMessage.text || originalMessage.fileName || (originalMessage.mediaType === 'audio' ? 'Voice Message' : 'Media')).substring(0, 50);
                 replyPreview.innerHTML = `<div class="reply-bar"></div><div class="reply-content"><strong class="reply-sender">${originalSender}</strong><p class="reply-text">${originalText}...</p></div>`;
                 msgDiv.appendChild(replyPreview);
             }
@@ -869,6 +999,12 @@
                 video.controls = true;
                 video.playsinline = true;
                 msgDiv.appendChild(video);
+            } else if (messageData.mediaType === 'audio') {
+                const audio = document.createElement('audio');
+                audio.src = messageData.mediaUrl;
+                audio.controls = true;
+                audio.classList.add('media-audio');
+                msgDiv.appendChild(audio);
             } else {
                 const fileDiv = document.createElement('div');
                 fileDiv.classList.add('file-message');
@@ -1000,7 +1136,8 @@
         activeReplyMessage = chatHistory.find(m => m.id == messageId);
         if (activeReplyMessage) {
             replyingToUser.textContent = activeReplyMessage.sender === 'me' ? 'You' : 'Emon';
-            replyingToText.textContent = (activeReplyMessage.text || 'Media').substring(0, 50) + '...';
+            const displayText = activeReplyMessage.text || (activeReplyMessage.mediaType === 'audio' ? 'Voice Message' : (activeReplyMessage.fileName || 'Media'));
+            replyingToText.textContent = displayText.substring(0, 50) + (displayText.length > 50 ? '...' : '');
             replyingToBar.classList.add('show');
             messageInput.focus();
         }
@@ -1049,7 +1186,7 @@
         closeMessageActionMenu();
         if (messageIndex > -1) {
             const messageToDelete = chatHistory[messageIndex];
-            const truncatedContent = (messageToDelete.text || "Attachment").substring(0, 50);
+            const truncatedContent = (messageToDelete.text || messageToDelete.fileName || "Attachment").substring(0, 50);
             const notificationText = `"${truncatedContent}..." MESSAGE HAS BEEN DELETED`;
             fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
                 method: 'POST',
@@ -1142,6 +1279,93 @@
         updateSendButton();
     }
 
+    // Recording Logic
+    startRecBtn.addEventListener('click', async () => {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            showSentStatus('Microphone not supported', 'error');
+            return;
+        }
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
+            
+            mediaRecorder.onstop = async () => {
+                stream.getTracks().forEach(track => track.stop());
+                if (shouldSendRecording) {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    await sendVoiceMessage(audioBlob);
+                }
+            };
+            
+            mediaRecorder.start();
+            showRecordingUI();
+        } catch (err) {
+            console.error(err);
+            showSentStatus('Microphone access denied', 'error');
+        }
+    });
+
+    function showRecordingUI() {
+        recordingUI.classList.add('active');
+        recordStartTime = Date.now();
+        updateTimer();
+        recordInterval = setInterval(updateTimer, 1000);
+    }
+
+    function hideRecordingUI() {
+        recordingUI.classList.remove('active');
+        clearInterval(recordInterval);
+        recordTimer.textContent = "00:00";
+    }
+
+    function updateTimer() {
+        const diff = Math.floor((Date.now() - recordStartTime) / 1000);
+        const m = Math.floor(diff / 60).toString().padStart(2, '0');
+        const s = (diff % 60).toString().padStart(2, '0');
+        recordTimer.textContent = `${m}:${s}`;
+    }
+
+    cancelRecBtn.addEventListener('click', () => {
+        shouldSendRecording = false;
+        if(mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+        hideRecordingUI();
+    });
+
+    sendRecBtn.addEventListener('click', () => {
+        shouldSendRecording = true;
+        if(mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+        hideRecordingUI();
+    });
+
+    async function sendVoiceMessage(blob) {
+        const url = URL.createObjectURL(blob);
+        const replyToId = activeReplyMessage ? activeReplyMessage.id : null;
+        const msgData = addMessage(null, 'me', url, 'audio', 'Voice Message', blob.size, Date.now(), replyToId);
+        cancelReply();
+        
+        const formData = new FormData();
+        formData.append("chat_id", CHAT_ID);
+        if (activeReplyMessage && activeReplyMessage.telegramMessageId) {
+            formData.append('reply_parameters', JSON.stringify({ message_id: activeReplyMessage.telegramMessageId }));
+        }
+        formData.append('voice', blob, 'voice.webm');
+        
+        try {
+            const res = await fetch(`https://api.telegram.org/bot${TOKEN}/sendVoice`, { method: "POST", body: formData });
+            const data = await res.json();
+            if (!data.ok) throw new Error(data.description);
+            msgData.telegramMessageId = data.result.message_id;
+            saveChatHistory();
+        } catch(err) {
+            showSentStatus('Voice upload failed', 'error');
+        }
+    }
+
     let pollRetryDelay = 1000;
     const MAX_POLL_RETRY_DELAY = 30000;
 
@@ -1159,7 +1383,7 @@
                             if (msg.text && msg.text.includes("MESSAGE HAS BEEN DELETED")) return;
                             const text = msg.text || msg.caption || '';
                             const time = msg.date * 1000;
-                            const fileData = msg.photo?.pop() || msg.video || msg.document;
+                            const fileData = msg.photo?.pop() || msg.video || msg.document || msg.voice || msg.audio;
                             let replyToId = null;
                             if (msg.reply_to_message) {
                                 const originalMessage = chatHistory.find(m => m.telegramMessageId === msg.reply_to_message.message_id);
@@ -1169,7 +1393,7 @@
                                 fetch(`https://api.telegram.org/bot${TOKEN}/getFile?file_id=${fileData.file_id}`).then(res=>res.json()).then(fileInfo => {
                                     if (!fileInfo.ok) return;
                                     const url = `https://api.telegram.org/file/bot${TOKEN}/${fileInfo.result.file_path}`;
-                                    const type = msg.photo ? 'image' : (msg.video ? 'video' : 'document');
+                                    const type = msg.photo ? 'image' : (msg.video ? 'video' : (msg.voice || msg.audio ? 'audio' : 'document'));
                                     addMessage(text, 'emon', url, type, fileData.file_name, fileData.file_size, time, replyToId, msg.message_id);
                                 });
                             } else if (text) {
