@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>yasiii susiii </title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>yasiii susiii</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Emoji Picker Library -->
-    <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
     <style>
         :root {
-            --bg-primary: #000000;
-            --bg-secondary: #1a1a1a;
-            --bubble-me: #2d2d2d;
-            --bubble-emon: #333333;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --border-color: #404040;
-            --input-bg: #2d2d2d;
+            --bg-primary: #05010a;
+            --bg-secondary: #12051c;
+            --bubble-me: #5a1c8a;
+            --bubble-emon: #1f0b33;
+            --text-primary: #f5e8ff;
+            --text-secondary: #c5aaf5;
+            --border-color: #3b1b52;
+            --input-bg: #10041b;
+            --accent: #a855f7;
         }
 
         * {
@@ -37,23 +36,21 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            background: var(--bg-primary);
+            background: radial-gradient(circle at top, rgba(168, 85, 247, 0.15), transparent 45%), var(--bg-primary);
             color: var(--text-primary);
         }
 
-        /* Main container */
         .chat-container {
             width: 100vw;
             height: 100%;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            background: var(--bg-primary);
+            background: transparent;
         }
 
-        /* Chat Header */
         .chat-header {
-            background: var(--bg-primary);
+            background: rgba(8, 2, 18, 0.8);
             border-bottom: 1px solid var(--border-color);
             color: var(--text-primary);
             padding: 1.25rem 1rem;
@@ -64,18 +61,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(12px);
         }
-        
-        #signal-light {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: currentColor;
-            transition: color 0.3s ease;
-        }
-        #signal-light.red { color: #ef4444; }
-        #signal-light.yellow { color: #facc15; }
-        #signal-light.green { color: #10b981; }
 
         .profile-link {
             font-size: 0.8rem;
@@ -86,25 +73,24 @@
             display: inline-flex;
             align-items: center;
         }
+
         .profile-link:hover {
             color: var(--text-primary);
         }
 
-        /* Chat messages area */
         .chat-box {
             flex: 1;
             padding: 1rem;
             padding-bottom: calc(1rem + 6rem + env(safe-area-inset-bottom, 0));
             overflow-y: auto;
             scroll-behavior: smooth;
-            background: var(--bg-primary);
+            background: linear-gradient(180deg, rgba(21, 7, 37, 0.8), rgba(5, 1, 10, 0.95));
         }
 
-        /* Simple message bubbles */
         .message {
             max-width: 75%;
             margin: 0.5rem 0;
-            padding: 0.75rem 1rem;
+            padding: 0.85rem 1.15rem;
             border-radius: 1.5rem;
             clear: both;
             word-wrap: break-word;
@@ -114,62 +100,66 @@
             transition: all 0.2s ease;
             user-select: none;
             cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
         }
 
-        .me { 
+        .me {
             background: var(--bubble-me);
-            color: var(--text-primary); 
-            margin-left: auto; 
+            color: var(--text-primary);
+            margin-left: auto;
             border-bottom-right-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .emon { 
+        .emon {
             background: var(--bubble-emon);
-            color: var(--text-primary); 
-            margin-right: auto; 
+            color: var(--text-primary);
+            margin-right: auto;
             border-bottom-left-radius: 0.5rem;
+            border: 1px solid rgba(168, 85, 247, 0.15);
         }
 
         .message:hover {
-            background-color: var(--bg-secondary);
+            transform: translateY(-1px);
+            background-color: rgba(255, 255, 255, 0.05);
         }
 
-        .message-time { 
-            font-size: 0.7rem; 
+        .message-time {
+            font-size: 0.7rem;
             color: var(--text-secondary);
-            opacity: 0.8; 
-            margin-top: 0.5rem; 
-            float: right; 
+            opacity: 0.85;
+            margin-top: 0.5rem;
+            float: right;
             margin-left: 1rem;
         }
-        
-        .media { 
-            display: block; 
-            max-width: 100%; 
-            border-radius: 1rem; 
+
+        .media {
+            display: block;
+            max-width: 100%;
+            border-radius: 1rem;
             margin: 0;
-            cursor: pointer; 
+            cursor: pointer;
             object-fit: cover;
             transition: opacity 0.2s ease;
+            box-shadow: 0 5px 30px rgba(168, 85, 247, 0.25);
         }
-        
+
         .message .media + .message-text-content {
             margin-top: 0.75rem;
         }
-        
+
         .media:hover {
-            opacity: 0.8;
+            opacity: 0.85;
         }
-        
-        .media-video { 
-            display: block; 
-            width: 100%; 
-            max-height: 280px; 
-            border-radius: 1rem; 
+
+        .media-video {
+            display: block;
+            width: 100%;
+            max-height: 280px;
+            border-radius: 1rem;
             margin: 0;
         }
 
-        /* Simple Input Bar */
         .input-box {
             position: fixed;
             left: 0;
@@ -180,364 +170,356 @@
             justify-content: center;
             align-items: center;
             padding: 1rem;
-            background: var(--bg-primary);
+            background: rgba(5, 1, 10, 0.95);
             border-top: 1px solid var(--border-color);
             flex-shrink: 0;
             z-index: 50;
+            backdrop-filter: blur(16px);
         }
 
-        .input-content-wrapper { 
-            display: flex; 
-            align-items: flex-end; 
-            width: 100%; 
-            max-width: 800px; 
+        .input-content-wrapper {
+            display: flex;
+            align-items: flex-end;
+            width: 100%;
+            max-width: 800px;
             gap: 0.75rem;
         }
 
-        .input-area-container { 
-            display: flex; 
-            flex-direction: column; 
-            flex-grow: 1; 
-            gap: 0.5rem; 
+        .input-area-container {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            gap: 0.5rem;
         }
 
-        .message-input-wrapper { 
-            flex: 1; 
-            display: flex; 
-            align-items: center; 
+        .message-input-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
             background: var(--input-bg);
-            border-radius: 2rem; 
+            border-radius: 2rem;
             border: 1px solid var(--border-color);
-            min-height: 3rem; 
+            min-height: 3rem;
             transition: border-color 0.3s ease;
-        }
-        
-        .message-input-wrapper:focus-within {
-            border-color: #007AFF;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
         }
 
-        .message-input { 
-            flex: 1; 
-            border: none; 
-            background: transparent; 
-            padding: 0.75rem 1rem; 
-            font-size: 1rem; 
-            outline: none; 
-            resize: none; 
-            max-height: 8rem; 
-            color: var(--text-primary); 
+        .message-input-wrapper:focus-within {
+            border-color: var(--accent);
+        }
+
+        .message-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            outline: none;
+            resize: none;
+            max-height: 8rem;
+            color: var(--text-primary);
             font-family: inherit;
         }
-        
-        .message-input::placeholder { 
-            color: var(--text-secondary); 
+
+        .message-input::placeholder {
+            color: var(--text-secondary);
         }
 
-        .send-button, .plus-button, .emoji-button { 
-            width: 3rem; 
-            height: 3rem; 
-            border-radius: 50%; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            font-size: 1.25rem; 
-            transition: all 0.3s ease; 
+        .send-button, .plus-button, .emoji-button {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.25rem;
+            transition: all 0.3s ease;
             border: 1px solid var(--border-color);
             cursor: pointer;
-        }
-        
-        .emoji-button { 
-            font-size: 1.5rem; 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
 
-        .send-button { 
-            background: #007AFF; 
+        .emoji-button {
+            font-size: 1.5rem;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, var(--accent), #7c3aed);
             color: white;
-        }
-        
-        .plus-button, .emoji-button { 
-            background: var(--input-bg); 
-            color: var(--text-primary); 
+            border: none;
         }
 
-        .send-button:hover:not(:disabled), .plus-button:hover, .emoji-button:hover { 
-            opacity: 0.8;
+        .plus-button, .emoji-button {
+            background: var(--input-bg);
+            color: var(--text-primary);
         }
 
-        .send-button:disabled { 
-            background: var(--bg-secondary); 
-            color: var(--text-secondary); 
-            cursor: not-allowed; 
+        .send-button:hover:not(:disabled), .plus-button:hover, .emoji-button:hover {
+            opacity: 0.85;
+            transform: translateY(-1px);
         }
-        
+
+        .send-button:disabled {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+        }
+
         .file-info-bar {
-            display: none; 
-            width: 100%; 
+            display: none;
+            width: 100%;
             padding: 0.75rem 1rem;
             background: var(--input-bg);
-            border-radius: 1rem; 
-            align-items: center; 
+            border-radius: 1rem;
+            align-items: center;
             justify-content: space-between;
             border: 1px solid var(--border-color);
         }
-        
-        .file-info-bar.show { 
-            display: flex; 
+
+        .file-info-bar.show {
+            display: flex;
         }
 
         #sentNotification {
-            position: fixed; 
-            top: -100px; 
-            left: 50%; 
+            position: fixed;
+            top: -100px;
+            left: 50%;
             transform: translateX(-50%);
             padding: 1rem 2rem;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color); 
+            background: rgba(15, 3, 24, 0.95);
+            border: 1px solid var(--border-color);
             border-radius: 2rem;
-            color: var(--text-primary); 
+            color: var(--text-primary);
             font-weight: 600;
-            z-index: 100; 
-            display: flex; 
-            align-items: center; 
+            z-index: 100;
+            display: flex;
+            align-items: center;
             gap: 0.75rem;
-            transition: all 0.6s ease; 
+            transition: all 0.6s ease;
             opacity: 0;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
         }
 
-        #sentNotification.show { 
-            top: 2rem; 
-            opacity: 1; 
+        #sentNotification.show {
+            top: 2rem;
+            opacity: 1;
         }
 
         .load-more {
             background: var(--input-bg);
-            border: 1px solid var(--border-color); 
+            border: 1px solid var(--border-color);
             color: var(--text-primary);
-            padding: 0.75rem 1.5rem; 
-            border-radius: 1.5rem; 
+            padding: 0.75rem 1.5rem;
+            border-radius: 1.5rem;
             margin: 1rem auto;
-            cursor: pointer; 
-            transition: all 0.3s ease; 
+            cursor: pointer;
+            transition: all 0.3s ease;
             text-align: center;
         }
 
-        .load-more:hover { 
+        .load-more:hover {
             background: var(--bg-secondary);
         }
 
-        .modal-container { 
-            display: none; 
-            position: fixed; 
-            z-index: 100; 
-            left: 0; 
-            top: 0; 
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background: rgba(0, 0, 0, 0.9);
-            justify-content: center; 
+        .modal-container {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background: rgba(3, 0, 7, 0.95);
+            justify-content: center;
             align-items: center;
         }
 
-        .modal-content { 
-            max-width: 90vw; 
-            max-height: 90vh; 
+        .modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
             border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.65);
         }
 
-        .close-modal-btn { 
-            position: absolute; 
-            top: 1rem; 
-            right: 2rem; 
-            color: white; 
-            font-size: 2rem; 
-            font-weight: bold; 
+        .close-modal-btn {
+            position: absolute;
+            top: 1rem;
+            right: 2rem;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
             cursor: pointer;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color); 
+            background: rgba(15, 3, 24, 0.9);
+            border: 1px solid var(--border-color);
             border-radius: 50%;
-            width: 3rem; 
-            height: 3rem; 
-            display: flex; 
-            align-items: center; 
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
         }
 
-        .close-modal-btn:hover { 
-            background: #ef4444; 
+        .close-modal-btn:hover {
+            background: #ef4444;
         }
 
         .date-separator span {
             background: var(--input-bg);
             border: 1px solid var(--border-color);
             color: var(--text-secondary);
-            padding: 0.5rem 1rem; 
-            border-radius: 1rem; 
-            font-size: 0.75rem; 
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
-        .chat-box::-webkit-scrollbar { 
-            width: 4px; 
-        }
-        
-        .chat-box::-webkit-scrollbar-track { 
-            background: transparent; 
-        }
-        
-        .chat-box::-webkit-scrollbar-thumb { 
-            background: var(--border-color); 
-            border-radius: 2px; 
-        }
-        
-        .chat-box::-webkit-scrollbar-thumb:hover { 
-            background: var(--text-secondary); 
+        .chat-box::-webkit-scrollbar {
+            width: 4px;
         }
 
-        .file-message { 
-            display: flex; 
-            align-items: center; 
-            padding: 1rem; 
-            background: var(--input-bg);
-            border-radius: 1rem; 
-            margin: 0.5rem 0; 
-            cursor: pointer; 
+        .chat-box::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        .file-message {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 1rem;
+            margin: 0.5rem 0;
+            cursor: pointer;
             transition: all 0.3s ease;
             border: 1px solid var(--border-color);
         }
-        
-        .file-message:hover { 
-            background: var(--bg-secondary);
+
+        .file-message:hover {
+            background: rgba(255, 255, 255, 0.08);
         }
-        
-        .file-icon { 
-            font-size: 1.5rem; 
-            margin-right: 0.75rem; 
-            color: var(--text-primary); 
+
+        .file-icon {
+            font-size: 1.5rem;
+            margin-right: 0.75rem;
+            color: var(--text-primary);
         }
-        
-        .reply-preview { 
-            padding: 0.5rem 0.75rem; 
-            margin-bottom: 0.5rem; 
-            border-radius: 0.75rem; 
-            background: rgba(255,255,255,0.1); 
-            display: flex; 
-            gap: 0.5rem; 
-            border: 1px solid var(--border-color);
+
+        .reply-preview {
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.75rem;
+            background: rgba(168, 85, 247, 0.12);
+            display: flex;
+            gap: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        
-        .reply-bar { 
-            width: 2px; 
-            background-color: #007AFF; 
-            border-radius: 1px; 
-            flex-shrink: 0; 
+
+        .reply-bar {
+            width: 2px;
+            background-color: var(--accent);
+            border-radius: 1px;
+            flex-shrink: 0;
         }
-        
-        .message.emon .reply-bar { 
-            background-color: var(--text-secondary); 
+
+        .message.emon .reply-bar {
+            background-color: var(--text-secondary);
         }
-        
-        .reply-content { 
-            font-size: 0.8rem; 
-            line-height: 1.2; 
-            overflow: hidden; 
+
+        .reply-content {
+            font-size: 0.8rem;
+            line-height: 1.2;
+            overflow: hidden;
         }
-        
-        .reply-sender { 
-            font-weight: 600; 
-            color: #007AFF; 
+
+        .reply-sender {
+            font-weight: 600;
+            color: var(--accent);
         }
-        
-        .message.emon .reply-sender { 
-            color: var(--text-primary); 
+
+        .message.emon .reply-sender {
+            color: var(--text-primary);
         }
-        
-        .reply-text { 
-            opacity: 0.8; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
+
+        .reply-text {
+            opacity: 0.8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        
+
         .reactions-container {
-            position: absolute; 
-            bottom: -0.75rem; 
-            right: 0.75rem; 
-            display: flex; 
+            position: absolute;
+            bottom: -0.75rem;
+            right: 0.75rem;
+            display: flex;
             gap: 0.25rem;
-            background: var(--input-bg);
-            padding: 0.25rem 0.5rem; 
-            border-radius: 1rem; 
-            border: 1px solid var(--border-color);
+            background: rgba(16, 4, 27, 0.9);
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(168, 85, 247, 0.3);
             transform: scale(0);
             transition: transform 0.3s ease;
-            transform-origin: bottom right; 
+            transform-origin: bottom right;
             z-index: 10;
         }
-        
-        .message.me .reactions-container { 
-            right: auto; 
-            left: 0.75rem; 
-            transform-origin: bottom left; 
+
+        .message.me .reactions-container {
+            right: auto;
+            left: 0.75rem;
+            transform-origin: bottom left;
         }
-        
-        .reactions-container.visible { 
-            transform: scale(1); 
+
+        .reactions-container.visible {
+            transform: scale(1);
         }
-        
-        .reaction-pill { 
-            font-size: 0.75rem; 
-            display: flex; 
-            align-items: center; 
+
+        .reaction-pill {
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
         }
-        
-        #messageActionMenu { 
-            transition: opacity 0.2s ease, transform 0.2s ease; 
+
+        #messageActionMenu {
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }
-        
+
         .context-action-btn {
-            display: flex; 
-            align-items: center; 
-            padding: 0.5rem 1rem; 
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
             border-radius: 0.375rem;
-            width: 100%; 
-            text-align: left; 
+            width: 100%;
+            text-align: left;
             color: var(--text-primary);
-            transition: background-color 0.2s ease; 
-            font-size: 0.875rem; 
+            transition: background-color 0.2s ease;
+            font-size: 0.875rem;
             font-weight: 500;
             cursor: pointer;
             border: none;
             background: transparent;
         }
-        
-        .context-action-btn:hover { 
-            background-color: var(--bg-secondary); 
+
+        .context-action-btn:hover {
+            background-color: rgba(255, 255, 255, 0.08);
         }
 
-        #emojiPickerContainer { 
-            position: absolute; 
-            z-index: 102; 
-        }
-        
-        emoji-picker {
-            --background: var(--input-bg);
-            --border-color: var(--border-color);
-            --outline-color: #007AFF;
-            --text-color: var(--text-primary);
-            --secondary-text-color: var(--text-secondary);
-            --border-radius: 1rem;
-        }
-
-        /* NEW STYLES FOR REACTION EXPAND */
         #quickReactions {
             display: flex;
             align-items: center;
             gap: 0.5rem;
             flex-wrap: nowrap;
         }
-        
+
         .reaction-emoji {
             flex-shrink: 0;
             background: transparent;
@@ -547,14 +529,14 @@
             font-size: 1.5rem;
             transition: transform 0.2s ease;
         }
-        
+
         .reaction-emoji:hover {
             transform: scale(1.25);
         }
-        
+
         .expand-toggle-btn {
             flex-shrink: 0;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             border: 1px solid var(--border-color);
             border-radius: 50%;
             width: 2rem;
@@ -566,48 +548,48 @@
             transition: all 0.3s ease;
             color: var(--text-primary);
         }
-        
+
         .expand-toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.15);
             transform: scale(1.1);
         }
-        
+
         #expandedReactionsPanel {
             display: none;
             grid-template-columns: repeat(auto-fill, minmax(2.5rem, 1fr));
             gap: 0.5rem;
             transition: all 0.3s ease;
         }
-        
+
         #expandedReactionsPanel.show {
             display: grid !important;
         }
-        
+
         #expandedReactionsPanel::-webkit-scrollbar {
             width: 4px;
         }
-        
+
         #expandedReactionsPanel::-webkit-scrollbar-track {
             background: transparent;
         }
-        
+
         #expandedReactionsPanel::-webkit-scrollbar-thumb {
             background: var(--border-color);
             border-radius: 2px;
         }
 
         @media (max-width: 768px) {
-            .message { 
-                max-width: 85%; 
-                padding: 0.875rem 1rem; 
+            .message {
+                max-width: 85%;
+                padding: 0.875rem 1rem;
             }
-            
-            .chat-header { 
-                padding: 1rem 0.75rem; 
+
+            .chat-header {
+                padding: 1rem 0.75rem;
             }
-            
-            .input-box { 
-                padding: 0.75rem; 
+
+            .input-box {
+                padding: 0.75rem;
             }
         }
     </style>
@@ -616,10 +598,7 @@
 
 <div class="chat-container">
     <div class="chat-header">
-        <div class="flex items-center justify-center gap-3 mb-1">
-            <h3 class="font-bold text-xl tracking-wide">Emon</h3>
-            <span id="signal-light"></span>
-        </div>
+        <h3 class="font-bold text-xl tracking-wide mb-1">Emon</h3>
         <a href="https://emoneditz.github.io/about-me/" target="_blank" class="profile-link">
             <i class="fas fa-user-circle mr-1"></i> View Profile
         </a>
@@ -681,17 +660,10 @@
     <img class="modal-content" id="fullImage" src="" alt="Full size image">
 </div>
 
-<!-- Container for Emoji Picker -->
-<div id="emojiPickerContainer" class="hidden absolute">
-    <emoji-picker></emoji-picker>
-</div>
-
 <div id="messageActionMenu" class="hidden absolute z-[101]">
     <div id="quickReactions" class="flex items-center gap-1 p-2 mb-2" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 2rem;">
-        <!-- Quick reactions (first 5) will be populated by JS -->
     </div>
     <div id="expandedReactionsPanel" class="hidden" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 1rem; padding: 1rem; margin-bottom: 0.5rem; max-height: 200px; overflow-y: auto;">
-        <!-- All reactions will be populated by JS -->
     </div>
     <div class="flex flex-col gap-1 p-1" style="background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 0.5rem;">
         <button id="replyBtn" class="context-action-btn">
@@ -709,11 +681,10 @@
     </div>
 </div>
 
-
 <script>
     const TOKEN = "7576622210:AAE9evjkyhHtGPU1Ox0s-Iivo3hlfD_Jny8";
     const CHAT_ID = "6009819572";
-    const EMON_ID = 6009819572; // Changed to number for strict comparison
+    const EMON_ID = 6009819572;
     const chatBox = document.getElementById('chatBox');
     const loadMoreBtn = document.getElementById('loadMore');
     const modalContainer = document.getElementById('modalContainer');
@@ -729,7 +700,7 @@
     const sentNotification = document.getElementById('sentNotification');
     const sentMessage = document.getElementById('sentMessage');
     const sentIcon = document.getElementById('sentIcon');
-    
+
     const messageActionMenu = document.getElementById('messageActionMenu');
     const quickReactions = document.getElementById('quickReactions');
     const expandedReactionsPanel = document.getElementById('expandedReactionsPanel');
@@ -740,34 +711,22 @@
     const replyingToUser = document.getElementById('replyingToUser');
     const replyingToText = document.getElementById('replyingToText');
     const replyCloseBtn = document.getElementById('replyCloseBtn');
-    const emojiPickerContainer = document.getElementById('emojiPickerContainer');
 
     let chatHistory = [];
     let historyOffset = 0;
     let isLoadingHistory = false;
     let lastUpdateId = 0;
     let initialLoadComplete = false;
-    
+
     let activeMessageElement = null;
     let activeReplyMessage = null;
     const defaultReactions = ['😊', '👍', '👎', '❤️', '🔥'];
     const allReactions = [
-        '😊', '👍', '👎', '❤️', '🔥', '🥰', '👏', '😁', '🤔', '🤯', 
-        '😱', '🤬', '😢', '😭', '😂', '😮', '🙏', '👌', '🤮', '💩', 
-        '🤡', '🕊️', '🐳', '🍓', '🎃', '👻', '🎉', '💔', '💯', '💸', 
+        '😊', '👍', '👎', '❤️', '🔥', '🥰', '👏', '😁', '🤔', '🤯',
+        '😱', '🤬', '😢', '😭', '😂', '😮', '🙏', '👌', '🤮', '💩',
+        '🤡', '🕊️', '🐳', '🍓', '🎃', '👻', '🎉', '💔', '💯', '💸',
         '⚡', '🏆', '🍾', '😈'
     ];
-    
-    let replyTimer = null; 
-    let isConnectionActive = false; // Tracks if the connection has been confirmed
-    
-    function setSignalLight(color) {
-        const light = document.getElementById('signal-light');
-        light.className = ''; // Clear existing color classes
-        if (color) {
-            light.classList.add(color);
-        }
-    }
 
     function loadChatHistory() {
         const storedHistory = localStorage.getItem('chatHistory');
@@ -797,11 +756,11 @@
             displayMessage(msg, false);
         });
         chatBox.insertAdjacentElement('afterbegin', loadMoreBtn);
-        if (chatHistory.length > count) { 
-            loadMoreBtn.style.display = 'block'; 
-            historyOffset = count; 
-        } else { 
-            loadMoreBtn.style.display = 'none'; 
+        if (chatHistory.length > count) {
+            loadMoreBtn.style.display = 'block';
+            historyOffset = count;
+        } else {
+            loadMoreBtn.style.display = 'none';
         }
         initialLoadComplete = true;
         setTimeout(() => scrollToBottom(), 100);
@@ -841,8 +800,8 @@
                 historyOffset += messagesToLoad;
                 chatBox.scrollTop = chatBox.scrollHeight - oldScrollHeight;
             }
-            if (historyOffset >= chatHistory.length) 
-                loadMoreBtn.style.display = 'none'; 
+            if (historyOffset >= chatHistory.length)
+                loadMoreBtn.style.display = 'none';
             loadMoreBtn.innerHTML = '<i class="fas fa-arrow-up mr-2"></i>Load older messages';
             isLoadingHistory = false;
         }, 800);
@@ -867,12 +826,12 @@
 
     function getFileIcon(fileName) {
         const ext = fileName.split('.').pop().toLowerCase();
-        const icons = { 
-            pdf: 'fa-solid fa-file-pdf', docx: 'fa-solid fa-file-word', txt: 'fa-solid fa-file-lines', 
+        const icons = {
+            pdf: 'fa-solid fa-file-pdf', docx: 'fa-solid fa-file-word', txt: 'fa-solid fa-file-lines',
             jpg: 'fa-solid fa-image', jpeg: 'fa-solid fa-image', png: 'fa-solid fa-image', gif: 'fa-solid fa-image',
-            mp4: 'fa-solid fa-file-video', mov: 'fa-solid fa-file-video', 
-            mp3: 'fa-solid fa-file-audio', 
-            zip: 'fa-solid fa-file-zipper' 
+            mp4: 'fa-solid fa-file-video', mov: 'fa-solid fa-file-video',
+            mp3: 'fa-solid fa-file-audio',
+            zip: 'fa-solid fa-file-zipper'
         };
         return icons[ext] || 'fa-solid fa-file';
     }
@@ -982,8 +941,6 @@
             messageActionMenu.classList.add('hidden');
             activeMessageElement = null;
         }
-        emojiPickerContainer.classList.add('hidden');
-        // Reset expanded panel when closing menu
         expandedReactionsPanel.classList.remove('show');
         expandedReactionsPanel.classList.add('hidden');
         const expandBtn = document.getElementById('expandBtn');
@@ -997,32 +954,46 @@
         const messageId = activeMessageElement.dataset.messageId;
         const message = chatHistory.find(m => m.id == messageId);
         if (message) {
-             if (message.reactions[emoji]) { delete message.reactions[emoji]; } else { message.reactions[emoji] = 1; }
+            if (message.reactions[emoji]) { delete message.reactions[emoji]; } else { message.reactions[emoji] = 1; }
             saveChatHistory();
             const reactionsContainer = activeMessageElement.querySelector('.reactions-container');
             updateReactionsDisplay(reactionsContainer, message.reactions);
             if (message.telegramMessageId) {
                 const reactionPayload = Object.keys(message.reactions).map(em => ({ type: 'emoji', emoji: em }));
-                fetch(`https://api.telegram.org/bot${TOKEN}/setMessageReaction`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: CHAT_ID, message_id: message.telegramMessageId, reaction: reactionPayload.length > 0 ? JSON.stringify(reactionPayload) : '', }) });
+                fetch(`https://api.telegram.org/bot${TOKEN}/setMessageReaction`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHAT_ID,
+                        message_id: message.telegramMessageId,
+                        reaction: reactionPayload.length > 0 ? JSON.stringify(reactionPayload) : '',
+                    })
+                });
             }
         }
         closeMessageActionMenu();
     }
-    
+
     function updateReactionsDisplay(container, reactions) {
         container.innerHTML = Object.keys(reactions).map(emoji => `<span class="reaction-pill">${emoji}</span>`).join('');
         container.classList.toggle('visible', Object.keys(reactions).length > 0);
     }
-    
+
     function copyMessageText() {
         if (!activeMessageElement) return;
         const textEl = activeMessageElement.querySelector('.message-text-content');
         if (textEl?.textContent) {
-            navigator.clipboard.writeText(textEl.textContent).then(() => { showSentStatus('Message copied!'); }, () => { showSentStatus('Failed to copy', 'error'); });
-        } else { showSentStatus('No text to copy', 'error'); }
+            navigator.clipboard.writeText(textEl.textContent).then(() => {
+                showSentStatus('Message copied!');
+            }, () => {
+                showSentStatus('Failed to copy', 'error');
+            });
+        } else {
+            showSentStatus('No text to copy', 'error');
+        }
         closeMessageActionMenu();
     }
-    
+
     function setupReply() {
         if (!activeMessageElement) return;
         const messageId = activeMessageElement.dataset.messageId;
@@ -1036,28 +1007,29 @@
         closeMessageActionMenu();
     }
 
-    function cancelReply() { activeReplyMessage = null; replyingToBar.classList.remove('show'); }
-    
+    function cancelReply() {
+        activeReplyMessage = null;
+        replyingToBar.classList.remove('show');
+    }
+
     function populateReactions() {
-        // Populate quick reactions (first 5 emojis + expand button)
-        quickReactions.innerHTML = defaultReactions.map(emoji => 
+        quickReactions.innerHTML = defaultReactions.map(emoji =>
             `<button class="reaction-emoji" onclick="event.stopPropagation(); handleReaction('${emoji}')">${emoji}</button>`
         ).join('') + `
             <button class="expand-toggle-btn" onclick="event.stopPropagation(); toggleReactionExpand()" id="expandBtn">
                 <i class="fas fa-chevron-down"></i>
             </button>
         `;
-        
-        // Populate expanded panel with all reactions
-        expandedReactionsPanel.innerHTML = allReactions.map(emoji => 
+
+        expandedReactionsPanel.innerHTML = allReactions.map(emoji =>
             `<button class="reaction-emoji" onclick="event.stopPropagation(); handleReaction('${emoji}')">${emoji}</button>`
         ).join('');
     }
-    
+
     function toggleReactionExpand() {
         const isExpanded = expandedReactionsPanel.classList.contains('show');
         const expandBtn = document.getElementById('expandBtn');
-        
+
         if (isExpanded) {
             expandedReactionsPanel.classList.remove('show');
             expandedReactionsPanel.classList.add('hidden');
@@ -1068,7 +1040,7 @@
             expandBtn.innerHTML = '<i class="fas fa-chevron-up"></i>';
         }
     }
-    
+
     function deleteMessage() {
         if (!activeMessageElement) return;
         const elementToDelete = activeMessageElement;
@@ -1079,7 +1051,11 @@
             const messageToDelete = chatHistory[messageIndex];
             const truncatedContent = (messageToDelete.text || "Attachment").substring(0, 50);
             const notificationText = `"${truncatedContent}..." MESSAGE HAS BEEN DELETED`;
-            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: CHAT_ID, text: notificationText }) });
+            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: CHAT_ID, text: notificationText })
+            });
             chatHistory.splice(messageIndex, 1);
             saveChatHistory();
             elementToDelete.style.transition = 'opacity 0.4s, transform 0.4s';
@@ -1094,19 +1070,13 @@
     function closeModal() { modalContainer.style.display = 'none'; }
     function scrollToBottom() { chatBox.scrollTop = chatBox.scrollHeight; }
     function openFileDialog() { fileInput.click(); }
-    
+
     async function sendMessage(textOverride = null) {
         const message = textOverride || messageInput.value.trim();
         const file = fileInput.files[0];
         if (file) { await sendFile(); return; }
         if (!message) return;
-        
-        if (!isConnectionActive) {
-            clearTimeout(replyTimer);
-            setSignalLight('yellow');
-            replyTimer = setTimeout(() => { setSignalLight('red'); }, 30000);
-        }
-        
+
         const replyToId = activeReplyMessage ? activeReplyMessage.id : null;
         let fetchBody = { chat_id: CHAT_ID, text: message };
         if(activeReplyMessage && activeReplyMessage.telegramMessageId) {
@@ -1116,13 +1086,16 @@
         if(!textOverride) { messageInput.value = ''; autoResizeTextarea(); }
         cancelReply();
         try {
-            const res = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(fetchBody) });
+            const res = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(fetchBody)
+            });
             const data = await res.json();
             if (!data.ok) throw new Error(data.description);
             sentMessageData.telegramMessageId = data.result.message_id;
             saveChatHistory();
         } catch(err) {
-            isConnectionActive = false; clearTimeout(replyTimer); setSignalLight('red');
             showSentStatus('Failed to send message', 'error');
         }
     }
@@ -1131,15 +1104,10 @@
         messageInput.style.height = 'auto';
         messageInput.style.height = `${Math.min(messageInput.scrollHeight, 128)}px`;
     }
-    
+
     async function sendFile() {
         const file = fileInput.files[0];
         if (!file) { showSentStatus('No file selected!', 'error'); return; }
-        if (!isConnectionActive) {
-            clearTimeout(replyTimer);
-            setSignalLight('yellow');
-            replyTimer = setTimeout(() => { setSignalLight('red'); }, 30000);
-        }
         const caption = messageInput.value.trim();
         const mediaType = file.type.startsWith('image/') ? 'image' : (file.type.startsWith('video/') ? 'video' : 'document');
         const replyToId = activeReplyMessage ? activeReplyMessage.id : null;
@@ -1160,7 +1128,6 @@
             sentMessageData.telegramMessageId = data.result.message_id;
             saveChatHistory();
         } catch(err) {
-            isConnectionActive = false; clearTimeout(replyTimer); setSignalLight('red');
             showSentStatus('Upload failed', 'error');
         }
         clearFileSelection();
@@ -1170,7 +1137,9 @@
         sendBtn.disabled = !(messageInput.value.trim().length > 0 || fileInput.files.length > 0);
     }
     function clearFileSelection() {
-        fileInput.value = ''; fileInfoBar.classList.remove('show'); updateSendButton();
+        fileInput.value = '';
+        fileInfoBar.classList.remove('show');
+        updateSendButton();
     }
 
     let pollRetryDelay = 1000;
@@ -1180,15 +1149,12 @@
         fetch(`https://api.telegram.org/bot${TOKEN}/getUpdates?offset=${lastUpdateId + 1}&timeout=25&allowed_updates=["message","message_reaction"]`)
             .then(res => res.ok ? res.json() : Promise.reject(new Error(res.statusText)))
             .then(data => {
-                pollRetryDelay = 1000; 
+                pollRetryDelay = 1000;
                 if (data.ok && data.result.length > 0) {
-                    let hadUpdateFromEmon = false;
                     data.result.forEach(update => {
                         lastUpdateId = update.update_id;
                         const msg = update.message;
                         const reaction = update.message_reaction;
-                        const isRelevantUpdate = (msg && msg.from.id === EMON_ID) || (reaction && reaction.user.id === EMON_ID);
-                        if(isRelevantUpdate) hadUpdateFromEmon = true;
                         if(msg && msg.from.id === EMON_ID) {
                             if (msg.text && msg.text.includes("MESSAGE HAS BEEN DELETED")) return;
                             const text = msg.text || msg.caption || '';
@@ -1200,12 +1166,12 @@
                                 if (originalMessage) replyToId = originalMessage.id;
                             }
                             if (fileData) {
-                                 fetch(`https://api.telegram.org/bot${TOKEN}/getFile?file_id=${fileData.file_id}`).then(res=>res.json()).then(fileInfo => {
+                                fetch(`https://api.telegram.org/bot${TOKEN}/getFile?file_id=${fileData.file_id}`).then(res=>res.json()).then(fileInfo => {
                                     if (!fileInfo.ok) return;
                                     const url = `https://api.telegram.org/file/bot${TOKEN}/${fileInfo.result.file_path}`;
                                     const type = msg.photo ? 'image' : (msg.video ? 'video' : 'document');
                                     addMessage(text, 'emon', url, type, fileData.file_name, fileData.file_size, time, replyToId, msg.message_id);
-                                 });
+                                });
                             } else if (text) {
                                 addMessage(text, 'emon', null, null, null, null, time, replyToId, msg.message_id);
                             }
@@ -1225,15 +1191,10 @@
                             }
                         }
                     });
-                    if (hadUpdateFromEmon) {
-                         isConnectionActive = true; clearTimeout(replyTimer); setSignalLight('green');
-                    }
                 }
-                pollMessages();  // immediate re-poll, no 1s delay
+                pollMessages();
             })
             .catch(err => {
-                isConnectionActive = false;
-                if (!replyTimer) setSignalLight('red'); 
                 console.error('Polling error:', err);
                 setTimeout(pollMessages, pollRetryDelay);
                 pollRetryDelay = Math.min(pollRetryDelay * 2, MAX_POLL_RETRY_DELAY);
@@ -1261,15 +1222,11 @@
     copyBtn.addEventListener('click', (e) => { e.stopPropagation(); copyMessageText(); });
     deleteBtn.addEventListener('click', (e) => { e.stopPropagation(); deleteMessage(); });
     replyCloseBtn.addEventListener('click', cancelReply);
-    document.querySelector('emoji-picker').addEventListener('emoji-click', event => {
-        handleReaction(event.detail.unicode);
-    });
 
     populateReactions();
     loadChatHistory();
     pollMessages();
     updateSendButton();
-    setSignalLight('yellow'); 
 </script>
 
 </body>
