@@ -850,12 +850,29 @@
 
     let activeMessageElement = null;
     let activeReplyMessage = null;
-    const defaultReactions = ['😊', '👍', '👎', '❤️', '🔥'];
+    let emojiUsage = {};
+
+    function loadEmojiUsage() {
+        try {
+            const stored = localStorage.getItem('emojiUsage');
+            if (stored) emojiUsage = JSON.parse(stored);
+        } catch (e) { console.error(e); }
+    }
+
+    function saveEmojiUsage() {
+        localStorage.setItem('emojiUsage', JSON.stringify(emojiUsage));
+    }
+
     const allReactions = [
-        '😊', '👍', '👎', '❤️', '🔥', '🥰', '👏', '😁', '🤔', '🤯',
-        '😱', '🤬', '😢', '😭', '😂', '😮', '🙏', '👌', '🤮', '💩',
-        '🤡', '🕊️', '🐳', '🍓', '🎃', '👻', '🎉', '💔', '💯', '💸',
-        '⚡', '🏆', '🍾', '😈'
+        '❤️', '🤷‍♀️', '😐', '😭', '👍', '🤣', '👎', '🫡',
+        '💔', '😇', '🌚', '🥰', '😡', '🥴', '🤔', '🤨',
+        '🤓', '🖕', '😁', '🤡', '🤝', '🙏', '🍓', '🔥',
+        '👏', '🤯', '😱', '🤬', '😢', '🎉', '🤩', '🤮',
+        '💩', '👌', '🕊️', '🥱', '😍', '🐳', '❤️‍🔥', '🌭',
+        '💯', '⚡', '🍌', '🏆', '🍾', '💋', '😈', '😴',
+        '👻', '🧑‍💻', '👀', '🎃', '🙈', '😨', '✍️', '🤗',
+        '🎅', '🎄', '☃️', '💅', '🤪', '🗿', '🆒', '💘',
+        '🙉', '🦄', '😘', '💊', '🙊', '😎', '👾', '🤷‍♂️'
     ];
 
     function loadChatHistory() {
@@ -1090,7 +1107,14 @@
         const messageId = activeMessageElement.dataset.messageId;
         const message = chatHistory.find(m => m.id == messageId);
         if (message) {
-            if (message.reactions[emoji]) { delete message.reactions[emoji]; } else { message.reactions[emoji] = 1; }
+            if (message.reactions[emoji]) { 
+                delete message.reactions[emoji]; 
+            } else { 
+                message.reactions[emoji] = 1;
+                emojiUsage[emoji] = Date.now();
+                saveEmojiUsage();
+                populateReactions();
+            }
             saveChatHistory();
             const reactionsContainer = activeMessageElement.querySelector('.reactions-container');
             updateReactionsDisplay(reactionsContainer, message.reactions);
@@ -1150,7 +1174,13 @@
     }
 
     function populateReactions() {
-        quickReactions.innerHTML = defaultReactions.map(emoji =>
+        const sortedReactions = [...allReactions].sort((a, b) => {
+            return (emojiUsage[b] || 0) - (emojiUsage[a] || 0);
+        });
+        
+        const topReactions = sortedReactions.slice(0, 5);
+
+        quickReactions.innerHTML = topReactions.map(emoji =>
             `<button class="reaction-emoji" onclick="event.stopPropagation(); handleReaction('${emoji}')">${emoji}</button>`
         ).join('') + `
             <button class="expand-toggle-btn" onclick="event.stopPropagation(); toggleReactionExpand()" id="expandBtn">
@@ -1158,7 +1188,7 @@
             </button>
         `;
 
-        expandedReactionsPanel.innerHTML = allReactions.map(emoji =>
+        expandedReactionsPanel.innerHTML = sortedReactions.map(emoji =>
             `<button class="reaction-emoji" onclick="event.stopPropagation(); handleReaction('${emoji}')">${emoji}</button>`
         ).join('');
     }
@@ -1447,6 +1477,7 @@
     deleteBtn.addEventListener('click', (e) => { e.stopPropagation(); deleteMessage(); });
     replyCloseBtn.addEventListener('click', cancelReply);
 
+    loadEmojiUsage();
     populateReactions();
     loadChatHistory();
     pollMessages();
